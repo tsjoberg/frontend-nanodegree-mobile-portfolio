@@ -421,39 +421,29 @@ var resizePizzas = function(size) {
 
   changeSliderLabel(size);
 
-  // Returns the size difference to change a pizza element from one size to another. Called by changePizzaSlices(size).
-  function determineDx (elem, size) {
-    var oldwidth = elem.offsetWidth;
-    var windowwidth = document.querySelector("#randomPizzas").offsetWidth;
-    var oldsize = oldwidth / windowwidth;
-
-    // TODO: change to 3 sizes? no more xl?
-    // Changes the slider value to a percent width
+  // Iterates through pizza elements on the page and changes their widths
+  function changePizzaSizes(size) {
+    
+    //Change pizza sizes using % widths with 3 sizes (small = 25%, medium = 33.33%, large = 50%)
     function sizeSwitcher (size) {
       switch(size) {
         case "1":
-          return 0.25;
+          return 25;
         case "2":
-          return 0.3333;
+          return 33.33;
         case "3":
-          return 0.5;
+          return 50;
         default:
           console.log("bug in sizeSwitcher");
       }
     }
 
-    var newsize = sizeSwitcher(size);
-    var dx = (newsize - oldsize) * windowwidth;
+    var sizePct = sizeSwitcher(size);
 
-    return dx;
-  }
+    var items = document.getElementsByClassName("randomPizzaContainer");
 
-  // Iterates through pizza elements on the page and changes their widths
-  function changePizzaSizes(size) {
-    for (var i = 0; i < document.querySelectorAll(".randomPizzaContainer").length; i++) {
-      var dx = determineDx(document.querySelectorAll(".randomPizzaContainer")[i], size);
-      var newwidth = (document.querySelectorAll(".randomPizzaContainer")[i].offsetWidth + dx) + 'px';
-      document.querySelectorAll(".randomPizzaContainer")[i].style.width = newwidth;
+    for (var i = 0; i < items.length; i++) {
+      items[i].style.width = sizePct + '%';
     }
   }
 
@@ -502,10 +492,18 @@ function updatePositions() {
   frame++;
   window.performance.mark("mark_start_frame");
 
-  var items = document.querySelectorAll('.mover');
+  var items = document.getElementsByClassName('mover');
+  var phaseAddition = document.body.scrollTop / 1250;
+  //Modulo Logic - only values 0-4 allowed
+  var mod = 0;
   for (var i = 0; i < items.length; i++) {
-    var phase = Math.sin((document.body.scrollTop / 1250) + (i % 5));
+    //Modulo Logic - if counter greater or equal to 5, reset counter to 0
+    if(mod >= 5) {
+      mod = 0;
+    }
+    var phase = Math.sin(phaseAddition + mod);
     items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
+    mod++;
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
