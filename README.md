@@ -79,3 +79,8 @@ Feeling uninspired by the portfolio? Here's a list of cool portfolios I found af
 3. Used faster dom methods (document.getElementById, document.getElementsByClassName) and cached dom references for re-use in the loop.
 4. Modified pizza slider logic to use percentages instead of calculating size for each loop iteration.
 5. Used browser width and height to generate # of pizzas instead of hardcoding 200 pizzas.
+
+### Running the site:
+
+1. Please open index.html to view the mobile portfolio!
+2. Click on "Cam's Pizzeria" to see the awesome pizza selections!
