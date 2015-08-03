@@ -71,3 +71,11 @@ Feeling uninspired by the portfolio? Here's a list of cool portfolios I found af
 * <a href="http://nicoledominguez.com/portfolio/">http://nicoledominguez.com/portfolio/</a>
 * <a href="http://www.roxannecook.com/">http://www.roxannecook.com/</a>
 * <a href="http://www.84colors.com/portfolio.html">http://www.84colors.com/portfolio.html</a>
+
+### Optimization Done:
+
+1. Removed all constant references outside of for loop (Dom query, same calculations).
+2. Refactored Modulo Logic to create single array for use for the phase addition. Prior this was being calculated in the loop each time. Now only calculating once (5 times) instead of by # of pizzas.
+3. Used faster dom methods (document.getElementById, document.getElementsByClassName) and cached dom references for re-use in the loop.
+4. Modified pizza slider logic to use percentages instead of calculating size for each loop iteration.
+5. Used browser width and height to generate # of pizzas instead of hardcoding 200 pizzas.
