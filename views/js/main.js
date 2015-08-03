@@ -399,20 +399,25 @@ var pizzaElementGenerator = function(i) {
 };
 
 // resizePizzas(size) is called when the slider in the "Our Pizzas" section of the website moves.
+
+//Performance Update:
+//1 - Change sizeSwitcher to use %s instead of pixels to simplify things and not have to calulate using old 'determineDx'
+//2 - Cache / call query selectors once (outside loop) instead of calling DOM every loop iteration
 var resizePizzas = function(size) { 
   window.performance.mark("mark_start_resize");   // User Timing API function
 
+  var pizzaSizeTextElem = document.querySelector("#pizzaSize");
   // Changes the value for the size of the pizza above the slider
   function changeSliderLabel(size) {
     switch(size) {
       case "1":
-        document.querySelector("#pizzaSize").innerHTML = "Small";
+        pizzaSizeTextElem.innerHTML = "Small";
         return;
       case "2":
-        document.querySelector("#pizzaSize").innerHTML = "Medium";
+        pizzaSizeTextElem.innerHTML = "Medium";
         return;
       case "3":
-        document.querySelector("#pizzaSize").innerHTML = "Large";
+        pizzaSizeTextElem.innerHTML = "Large";
         return;
       default:
         console.log("bug in changeSliderLabel");
@@ -459,8 +464,8 @@ var resizePizzas = function(size) {
 window.performance.mark("mark_start_generating"); // collect timing data
 
 // This for-loop actually creates and appends all of the pizzas when the page loads
+var pizzasDiv = document.getElementById("randomPizzas");
 for (var i = 2; i < 100; i++) {
-  var pizzasDiv = document.getElementById("randomPizzas");
   pizzasDiv.appendChild(pizzaElementGenerator(i));
 }
 
@@ -493,17 +498,20 @@ function updatePositions() {
   window.performance.mark("mark_start_frame");
 
   var items = document.getElementsByClassName('mover');
+
+  //This is moved outside of loop as its the same value each time. No need to calculate each time.
   var phaseAddition = document.body.scrollTop / 1250;
-  //Modulo Logic - only values 0-4 allowed
-  var mod = 0;
+
+  //The Modulo Logic only has values 0-4 so creating initial loop to create phase array as will be same 5 values.
+  //These values will then be used in the second for loop for the addition to the pizza item.
+  var phase = []; 
+
+  for (var i = 0; i < 5; i++) {
+    phase.push(Math.sin(phaseAddition + i) * 100);
+  }
+
   for (var i = 0; i < items.length; i++) {
-    //Modulo Logic - if counter greater or equal to 5, reset counter to 0
-    if(mod >= 5) {
-      mod = 0;
-    }
-    var phase = Math.sin(phaseAddition + mod);
-    items[i].style.left = items[i].basicLeft + 100 * phase + 'px';
-    mod++;
+    items[i].style.left = items[i].basicLeft + phase[i%5] + 'px';
   }
 
   // User Timing API to the rescue again. Seriously, it's worth learning.
@@ -523,7 +531,11 @@ window.addEventListener('scroll', updatePositions);
 document.addEventListener('DOMContentLoaded', function() {
   var cols = 8;
   var s = 256;
-  for (var i = 0; i < 200; i++) {
+  //Use the window height/width to calculate the number of sliding pizzas to load instead of hardcode 200.
+  var heightPizzas = Math.floor(window.innerHeight / 200);
+  var widthPizzas = Math.floor(window.innerWidth / 150);
+  var numPizzas = heightPizzas * widthPizzas;
+  for (var i = 0; i < numPizzas; i++) {
     var elem = document.createElement('img');
     elem.className = 'mover';
     elem.src = "images/pizza.png";
